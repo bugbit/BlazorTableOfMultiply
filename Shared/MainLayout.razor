@@ -29,9 +29,9 @@
         {
             var opt = await CurrentVoiceOptions.LoadAsync();
 
-            voiceOptions.Name = (opt == null)
+            voiceOptions.VoiceIdentity = (opt == null)
                 ? (await VoicesService.GetVoiceByCultureName(CultureInfo.CurrentCulture.Name))?.VoiceIdentity
-                : opt.Name;
+                : opt.VoiceIdentity;
 
             StateHasChanged();
         }
