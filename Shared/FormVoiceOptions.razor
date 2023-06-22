@@ -1,0 +1,7 @@
+﻿<EditForm Model="@VoiceOptions">
+    <VoiceSelector @bind-VoiceIdentity="VoiceOptions.Name"></VoiceSelector>
+</EditForm>
+
+@code {
+    [Parameter] public VoiceOptions VoiceOptions { get; set; } = new();
+}
