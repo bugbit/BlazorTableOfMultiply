@@ -1,6 +1,6 @@
 ﻿@inject VoicesService VoicesService
 
-<InputSelect ValueExpression="()=> VoiceIdentity" @onchange="VoiceName_ValueChanged" @attributes="AdditionalAttributes">
+<InputSelect ValueExpression="()=> VoiceIdentity" @onchange="VoiceIdentity_ValueChanged" @attributes="AdditionalAttributes">
     @if (Voices != null)
     {
         foreach (var voice in Voices)
