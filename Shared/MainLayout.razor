@@ -1,15 +1,11 @@
 ﻿@inherits LayoutComponentBase
-@using System.Globalization;
-@inject VoicesService VoicesService
-@inject CurrentVoiceOptions CurrentVoiceOptions
 
 <div class="page">
-    <div class="sidebar">
+    @*<div class="sidebar">
         <NavMenu />
-    </div>
+    </div>*@
 
     <main>
-        <div><FormVoiceOptions VoiceOptions="voiceOptions"></FormVoiceOptions></div>
         <div class="top-row px-4">
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
         </div>
@@ -19,23 +15,3 @@
         </article>
     </main>
 </div>
-
-@code {
-    VoiceOptions voiceOptions = new();
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            var opt = await CurrentVoiceOptions.LoadAsync();
-
-            voiceOptions.VoiceIdentity = (opt == null)
-                ? (await VoicesService.GetVoiceByCultureName(CultureInfo.CurrentCulture.Name))?.VoiceIdentity
-                : opt.VoiceIdentity;
-
-            StateHasChanged();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-}
