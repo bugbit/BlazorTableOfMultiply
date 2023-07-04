@@ -4,7 +4,6 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>		
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -13,9 +12,4 @@
 		<PackageReference Include="PublishSPAforGitHubPages.Build" Version="2.0.2" />
 		<PackageReference Include="Toolbelt.Blazor.SpeechSynthesis" Version="10.0.0" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
-	</ItemGroup>
-
 </Project>
