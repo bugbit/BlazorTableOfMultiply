@@ -4,9 +4,7 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
-		<WasmEnableSIMD>true</WasmEnableSIMD>
-		<RunAOTCompilation>true</RunAOTCompilation>
+		<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>		
 	</PropertyGroup>
 
 	<ItemGroup>
