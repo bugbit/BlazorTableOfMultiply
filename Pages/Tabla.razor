@@ -28,11 +28,13 @@
         </div>
     </nav>
 </div>
+<button type="button" @onclick="DoSpeak" disabled="@isSpeaking" class="btn btn-lg btn-success">Repetir</button>
 
 @code {
     [Parameter]
     public int N { get; set; }
 
+    bool isSpeaking = false;
     const int _m = 10;
     SpeechSynthesisUtterance utterancet = new();
     private int currentSpeakM = 1;
@@ -41,9 +43,19 @@
     {
         utterancet.End += Speak_End;
 
-        await DoSpeakCurrentM();
+        await DoSpeak();
 
         await base.OnInitializedAsync();
+    }
+
+    async Task DoSpeak()
+    {
+        if (SpeechSynthesis.Speaking)
+            await SpeechSynthesis.CancelAsync();
+        isSpeaking = true;
+        currentSpeakM = 1;
+        await DoSpeakCurrentM();
+        StateHasChanged();
     }
 
     async Task DoSpeakCurrentM()
@@ -59,6 +71,11 @@
             currentSpeakM++;
             StateHasChanged();
             await DoSpeakCurrentM();
+        }
+        else
+        {
+            isSpeaking = false;
+            StateHasChanged();
         }
     }
 
