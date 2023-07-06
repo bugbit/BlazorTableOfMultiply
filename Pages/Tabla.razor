@@ -1,39 +1,43 @@
 ﻿@page "/tabla/{n:int}"
 @inject SpeechSynthesis SpeechSynthesis
+@inject NavigationManager NavigationManager
 @implements IAsyncDisposable
 
 <h3>Tabla de @N</h3>
 
-<div class="container">
-    @{
-        var m = _m;
-    }
-    @for (var i = 1; i <= m; i++)
-    {
-        var style = i == currentSpeakM ? " background-color: yellow; color: black" : null;
+@{
+    var m = _m;
+}
+@for (var i = 1; i <= m; i++)
+{
+    var style = i == currentSpeakM ? " background-color: yellow; color: black" : null;
 
-        <div class="row">
-            <div class="col-12 col-md-6">
-                <span style="@style">@N x @i = @(N * i)</span>
-            </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <span style=@style>@N x @i = @(N * i)</span>
         </div>
-    }
-</div>
-<div class="nav-scrollable">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Tablas de multiplicar
-            </NavLink>
-        </div>
-    </nav>
-</div>
-<button type="button" @onclick="DoSpeak" disabled="@isSpeaking" class="btn btn-lg btn-success">Repetir</button>
+    </div>
+}
+<br />
+<button type="button" @onclick="DoHome" class="btn btn-lg btn-primary">Tablas de multiplicar</button>&nbsp;
+@if (!isSpeaking)
+{
+    <button type="button" @onclick="DoRepetirTabla" class="btn btn-lg btn-success">Repetir</button>
+
+    @:&nbsp;
+}
+else
+{
+    <button type="button" @onclick="Cancel" class="btn btn-lg btn-danger">Cancelar</button>
+
+    @:&nbsp;
+}
 
 @code {
     [Parameter]
     public int N { get; set; }
 
+    bool speakAllNumbers = true;
     bool isSpeaking = false;
     const int _m = 10;
     SpeechSynthesisUtterance utterancet = new();
@@ -48,14 +52,40 @@
         await base.OnInitializedAsync();
     }
 
+    async Task DoHome()
+    {
+        await Cancel();
+        NavigationManager.NavigateTo("/", false);
+    }
+
     async Task DoSpeak()
     {
         if (SpeechSynthesis.Speaking)
             await SpeechSynthesis.CancelAsync();
         isSpeaking = true;
-        currentSpeakM = 1;
         await DoSpeakCurrentM();
         StateHasChanged();
+    }
+
+    async Task Cancel()
+    {
+        isSpeaking = speakAllNumbers = false;
+        await SpeechSynthesis.CancelAsync();
+        StateHasChanged();
+    }
+
+    async Task DoRepetirTabla()
+    {
+        currentSpeakM = 1;
+        speakAllNumbers = true;
+        await DoSpeak();
+    }
+
+    async Task DoRepetirNumber(int m)
+    {
+        currentSpeakM = m;
+        speakAllNumbers = false;
+        await DoSpeak();
     }
 
     async Task DoSpeakCurrentM()
@@ -66,7 +96,7 @@
 
     async void Speak_End(object? sender, SpeechSynthesisStatusEventArgs e)
     {
-        if (currentSpeakM < _m)
+        if (speakAllNumbers && currentSpeakM < _m)
         {
             currentSpeakM++;
             StateHasChanged();
@@ -74,7 +104,7 @@
         }
         else
         {
-            isSpeaking = false;
+            isSpeaking = speakAllNumbers = false;
             StateHasChanged();
         }
     }
