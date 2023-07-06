@@ -64,7 +64,7 @@ else
     async Task DoHome()
     {
         await Cancel();
-        NavigationManager.NavigateTo("/", false);
+        NavigationManager.NavigateTo(NavigationManager.BaseUri, false);
     }
 
     async Task DoSpeak()
