@@ -4,6 +4,8 @@
 		<TargetFramework>net7.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
+		<PublishTrimmed>true</PublishTrimmed>
+		<BlazorEnableCompression>false</BlazorEnableCompression>
 	</PropertyGroup>
 
 	<ItemGroup>
