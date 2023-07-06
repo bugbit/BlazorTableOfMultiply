@@ -7,7 +7,7 @@
   "linkerEnabled": true,
   "resources": {
     "assembly": {
-      "BlazorTableOfMultiply.dll": "sha256-pc89if9af2uwkPnQrokcjIN\/L524zeUUSn\/zzGsGaGo=",
+      "BlazorTableOfMultiply.dll": "sha256-cI+4s9Rv0CHfvU\/skgU8DSNHILX8kNZ7IuLLOWuFtS0=",
       "Microsoft.AspNetCore.Components.dll": "sha256-WAwpuuscUdexNNLidVAlGMSioutIOBQUVtccz0kGWNE=",
       "Microsoft.AspNetCore.Components.Web.dll": "sha256-a1LPwmBT0r7F7jjDNaOV\/TbHfHTuSQitRLy+YyOLPkM=",
       "Microsoft.AspNetCore.Components.WebAssembly.dll": "sha256-PTSKKTHwdz5fL0+3rx9EsDSIbwi8jHHDx2mIx2Rxavo=",
