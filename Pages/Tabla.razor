@@ -64,7 +64,7 @@ else
     async Task DoHome()
     {
         await Cancel();
-        NavigationManager.NavigateTo(NavigationManager.ToAbsoluteUri("").ToString(),/*NavigationManager.BaseUri*/, false);
+        NavigationManager.NavigateTo(NavigationManager.ToAbsoluteUri("").ToString()/*NavigationManager.BaseUri*/, false);
     }
 
     async Task DoSpeak()
