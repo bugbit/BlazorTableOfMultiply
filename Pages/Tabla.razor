@@ -16,7 +16,7 @@
         <div class="col-12 col-md-6">
             <span style=@style>
                 @FmtNumber(N) x @FmtNumber(i) = @FmtNumber(N * i)
-                @if (!speakAllNumbers && !isSpeaking)
+                @if (!SpeakAllNumbers.GetValueOrDefault() && !isSpeaking)
                 {
                     var onclick = new RepetirNumberAction(this, i);
 
@@ -39,12 +39,15 @@ else
     <button type="button" @onclick="Cancel" class="btn btn-lg btn-danger">Cancelar</button>
     @:&nbsp;
 }
+<button type="button" @onclick="DoRepasar" class="btn btn-lg btn-secondary">Repasar</button>
 
 @code {
     [Parameter]
     public int N { get; set; }
 
-    bool speakAllNumbers = true;
+    [Parameter, SupplyParameterFromQuery()]
+    public bool? SpeakAllNumbers { get; set; } = true;
+
     bool isSpeaking = false;
     const int _m = 10;
     SpeechSynthesisUtterance utterancet = new();
@@ -54,9 +57,25 @@ else
     {
         utterancet.End += Speak_End;
 
-        await DoSpeak();
+        //await DoSpeak();
 
         await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            if (SpeakAllNumbers.GetValueOrDefault())
+                await DoSpeak();
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!SpeakAllNumbers.HasValue)
+            SpeakAllNumbers = true;
+        base.OnParametersSet();
     }
 
     MarkupString FmtNumber(int n) => (MarkupString)$"{n,3}".Replace(" ", "&nbsp;");
@@ -78,7 +97,8 @@ else
 
     async Task Cancel()
     {
-        isSpeaking = speakAllNumbers = false;
+        isSpeaking = false;
+        SpeakAllNumbers = false;
         await SpeechSynthesis.CancelAsync();
         StateHasChanged();
     }
@@ -86,14 +106,22 @@ else
     async Task DoRepetirTabla()
     {
         currentSpeakM = 1;
-        speakAllNumbers = true;
+        SpeakAllNumbers = true;
         await DoSpeak();
+    }
+
+    async Task DoRepasar()
+    {
+        var speakAllNumbers = SpeakAllNumbers;
+
+        await Cancel();
+        NavigationManager.NavigateTo(NavigationManager.ToAbsoluteUri($"repasar/{N}?speakAllNumbers={speakAllNumbers}").ToString()/*NavigationManager.BaseUri*/, false);
     }
 
     public async Task DoRepetirNumber(int m)
     {
         currentSpeakM = m;
-        speakAllNumbers = false;
+        SpeakAllNumbers = false;
         await DoSpeak();
     }
 
@@ -105,7 +133,7 @@ else
 
     async void Speak_End(object? sender, SpeechSynthesisStatusEventArgs e)
     {
-        if (speakAllNumbers && currentSpeakM < _m)
+        if (SpeakAllNumbers.GetValueOrDefault() && currentSpeakM < _m)
         {
             currentSpeakM++;
             StateHasChanged();
@@ -113,7 +141,8 @@ else
         }
         else
         {
-            isSpeaking = speakAllNumbers = false;
+            isSpeaking = false;
+            SpeakAllNumbers = false;
             StateHasChanged();
         }
     }

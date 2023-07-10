@@ -1,0 +1,96 @@
+﻿@page "/repasar/{n:int}"
+@inject NavigationManager NavigationManager
+@inject SpeechSynthesis SpeechSynthesis
+@inject IJSRuntime Js;
+@implements IAsyncDisposable
+
+<div class="repasar">
+    <div class="container">
+        <div class="row">
+            <h3>Repasar la tabla de @N</h3>
+        </div>
+        <div class="row">
+            <h4>¿ Cuanto es @N x @_m ?</h4>
+        </div>
+        @{
+            var n = _mTop;
+        }
+        <div class="tresult text-center">
+            @for (var i = 1; i <= rowsTabla; i++)
+            {
+                <div class="row">
+                    @for (var j = 1; j <= columnsTabla; j++)
+                    {
+                        Func<Task> onclick = n == _result ? RespuestaBuena : RespuestaMala;
+
+                        <div class="col">
+                            <button @onclick=onclick class="btn btn-primary">@(n++)</button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+    <div clas="row">
+        <button type="button" @onclick="DoVolver" class="btn btn-lg btn-primary">Volver</button>
+    </div>
+</div>
+@code {
+    [Parameter]
+    public int N { get; set; }
+
+    [Parameter, SupplyParameterFromQuery()]
+    public bool? SpeakAllNumbers { get; set; } = true;
+
+    const int rowsTabla = 5;
+    const int columnsTabla = 5;
+    const int nElementsTabla = rowsTabla * columnsTabla;
+    private int _m;
+    private int _result;
+    private int _mTop;
+    private Random _random = new Random();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await DoEjercicio();
+        await base.OnInitializedAsync();
+    }
+
+    async Task DoVolver()
+    {
+        await Cancel();
+        NavigationManager.NavigateTo(NavigationManager.ToAbsoluteUri($"tabla/{N}?speakAllNumbers={SpeakAllNumbers}").ToString()/*NavigationManager.BaseUri*/, false);
+    }
+
+    async Task Cancel() => await SpeechSynthesis.CancelAsync();
+
+    async Task DoEjercicio()
+    {
+        _m = _random.Next(1, 10);
+        _result = N * _m;
+        _mTop = Math.Max(_result + _random.Next(nElementsTabla) - nElementsTabla, 1);
+        await Cancel();
+        await SpeechSynthesis.SpeakAsync($"¿ Cuanto es {N} por {_m} ?");
+    }
+
+    async Task RespuestaBuena()
+    {
+        await Cancel();
+        await SpeechSynthesis.SpeakAsync("Es correcto, muy bien");
+        await Js.InvokeVoidAsync("alert", "Es correcto, !!!!muy bien!!!!");
+        await DoEjercicio();
+    }
+
+    async Task RespuestaMala()
+    {
+        await Cancel();
+        await SpeechSynthesis.SpeakAsync($"No es correcto, el resultado es {_result}");
+        await Js.InvokeVoidAsync("alert", $"No es correcto, es {_result}");
+        await DoEjercicio();
+    }
+
+    async public ValueTask DisposeAsync()
+    {
+        await SpeechSynthesis.CancelAsync();
+    }
+}
