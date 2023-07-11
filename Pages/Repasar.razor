@@ -66,9 +66,11 @@
 
     async Task DoEjercicio()
     {
+        const int max = nElementsTabla - 1;
+
         _m = _random.Next(1, 10);
         _result = N * _m;
-        _mTop = Math.Max(_result + _random.Next(nElementsTabla) - nElementsTabla, 1);
+        _mTop = Math.Max(_result + _random.Next(max) - max, 1);
         await Cancel();
         await SpeechSynthesis.SpeakAsync($"¿ Cuanto es {N} por {_m} ?");
     }
